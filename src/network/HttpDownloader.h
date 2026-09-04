@@ -58,4 +58,10 @@ class HttpDownloader {
   // any transport / status failure, or if onResponse returns false.
   static bool postJson(const std::string& url, const std::string& payload, const std::string& bearerToken,
                        const std::function<bool(Stream&)>& onResponse, int timeoutMs = 60000);
+
+  // application/json GET with the same pull-style Stream contract as postJson.
+  // Useful for small JSON endpoints (library shelves, sync status) where the
+  // caller wants to deserialize straight into ArduinoJson with a filter
+  // instead of buffering the whole body in a std::string first.
+  static bool getJson(const std::string& url, const std::function<bool(Stream&)>& onResponse, int timeoutMs = 60000);
 };

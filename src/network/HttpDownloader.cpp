@@ -296,6 +296,54 @@ bool HttpDownloader::postJson(const std::string& url, const std::string& payload
   return runPostJson(url, payload, bearerToken, onResponse, timeoutMs);
 }
 
+bool HttpDownloader::getJson(const std::string& url, const std::function<bool(Stream&)>& onResponse, int timeoutMs) {
+  LOG_DBG("HTTP", "GET: %s", url.c_str());
+  esp_http_client_config_t config = {};
+  config.url = url.c_str();
+  config.buffer_size = HTTP_RX_BUF;
+  config.buffer_size_tx = HTTP_TX_BUF;
+  config.timeout_ms = timeoutMs;
+  // Verified HTTPS via the bundled CA roots — same trust posture as runGet.
+  config.crt_bundle_attach = esp_crt_bundle_attach;
+  config.keep_alive_enable = true;
+
+  esp_http_client_handle_t client = esp_http_client_init(&config);
+  if (!client) {
+    LOG_ERR("HTTP", "GET client init failed");
+    return false;
+  }
+
+  esp_http_client_set_header(client, "User-Agent", "CrossPoint-ESP32-" CROSSPOINT_VERSION);
+
+  // GET with 0 content length — same read path as runGet but reusing the
+  // pull-style stream wrapper so the caller can deserializeJson incrementally.
+  // Redirects are not followed here (like POST): a 30x on a JSON API is a
+  // misconfiguration we want to surface.
+  esp_err_t err = esp_http_client_open(client, 0);
+  if (err != ESP_OK) {
+    LOG_ERR("HTTP", "GET open failed: %s", esp_err_to_name(err));
+    esp_http_client_cleanup(client);
+    return false;
+  }
+
+  (void)esp_http_client_fetch_headers(client);
+  const int status = esp_http_client_get_status_code(client);
+  if (status != 200) {
+    LOG_ERR("HTTP", "GET unexpected status: %d", status);
+    esp_http_client_cleanup(client);
+    return false;
+  }
+
+  EspHttpReadStream bodyStream(client);
+  const bool consumerOk = onResponse(bodyStream);
+  esp_http_client_cleanup(client);
+  if (!consumerOk) {
+    LOG_ERR("HTTP", "GET consumer reported failure");
+    return false;
+  }
+  return true;
+}
+
 HttpDownloader::DownloadError HttpDownloader::downloadToFile(const std::string& url, const std::string& destPath,
                                                              ProgressCallback progress, bool* cancelFlag,
                                                              const std::string& username, const std::string& password) {

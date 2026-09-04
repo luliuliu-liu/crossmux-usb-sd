@@ -7,6 +7,7 @@
 #include <array>
 #include <cctype>
 #include <charconv>
+#include <cstdlib>
 #include <cstring>
 #include <string_view>
 
@@ -116,8 +117,30 @@ bool tryParseNumber(std::string_view s, T& out) {
   const char* begin = s.data();
   const char* end = s.data() + s.size();
   if (begin < end && *begin == '+') ++begin;
+  // macOS libc++ (and other non-libstdc++ toolchains) do not ship the
+  // floating-point overload of std::from_chars; fall back to strtof/strtol
+  // there so the host simulator builds too.
+#if defined(__cpp_lib_to_chars) && defined(__cplusplus) >= 201703L && \
+    (!defined(__APPLE__) || defined(_LIBCPP_HAS_CHARCONV_FROM_FLOAT))
   const auto r = std::from_chars(begin, end, out);
   return r.ec == std::errc{} && r.ptr == end;
+#else
+  if constexpr (std::is_integral_v<T>) {
+    errno = 0;
+    char* parsed = nullptr;
+    const long long v = std::strtoll(begin, &parsed, 10);
+    if (errno != 0 || parsed == begin || parsed != end) return false;
+    out = static_cast<T>(v);
+    return true;
+  } else {
+    errno = 0;
+    char* parsed = nullptr;
+    const double v = std::strtod(begin, &parsed);
+    if (errno != 0 || parsed == begin || parsed != end) return false;
+    out = static_cast<T>(v);
+    return true;
+  }
+#endif
 }
 
 // Collect up to 4 whitespace-separated tokens for a CSS edge-value shorthand
