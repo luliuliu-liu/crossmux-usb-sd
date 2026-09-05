@@ -177,7 +177,35 @@ void selfTest() {}
   void Cls::render(RenderLock&&) {}
 
 #include "activities/network/WifiSelectionActivity.h"
-STUB_ACTIVITY_BASE(WifiSelectionActivity)
+// Host simulator has no WiFi radio or scan UI. Keep the screen explicit rather
+// than leaving an empty stub that looks like a hang. OPDS itself uses the host
+// network directly and does not enter this Activity when localIP() is valid.
+void WifiSelectionActivity::onEnter() {
+  Activity::onEnter();
+  requestUpdate();
+}
+void WifiSelectionActivity::onExit() { Activity::onExit(); }
+void WifiSelectionActivity::onComplete(bool connected) {
+  ActivityResult result;
+  result.isCancelled = !connected;
+  setResult(std::move(result));
+  finish();
+}
+void WifiSelectionActivity::loop() {
+  if (mappedInput.wasReleased(MappedInputManager::Button::Back) ||
+      mappedInput.wasReleased(MappedInputManager::Button::Confirm)) {
+    onComplete(false);
+  }
+}
+void WifiSelectionActivity::render(RenderLock&&) {
+  renderer.clearScreen();
+  const int h = renderer.getScreenHeight();
+  renderer.drawCenteredText(UI_12_FONT_ID, h / 2 - 25, "Wi-Fi settings unavailable");
+  renderer.drawCenteredText(UI_10_FONT_ID, h / 2 + 5, "Simulator uses the host network directly");
+  const auto labels = mappedInput.mapLabels("Back", "OK", "", "");
+  GUI.drawButtonHints(renderer, labels.btn1, labels.btn2, labels.btn3, labels.btn4);
+  renderer.displayBuffer();
+}
 
 #include "activities/network/CrossPointWebServerActivity.h"
 // The real file-transfer server depends on ESPmDNS/WebServer and is excluded
