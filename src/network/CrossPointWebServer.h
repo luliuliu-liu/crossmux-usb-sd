@@ -141,9 +141,5 @@ class CrossPointWebServer {
   void handleDeleteWifiNetwork();
 
 #ifdef ENABLE_CHINESE_VERSION
-  // WeRead API key handlers — only built into the Chinese release, which is
-  // where the WeRead Companion app itself lives (see build_src_filter).
-  void handleWeReadKeyPage() const;
-  void handlePostWeReadKey();
 #endif
 };

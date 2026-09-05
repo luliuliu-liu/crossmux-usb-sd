@@ -82,7 +82,6 @@ class ActivityManager {
   // goTo... functions are convenient wrapper for replaceActivity()
   void goToFileTransfer();
   void goToSettings();
-  void goToUglyAvatar();
   void goToReadingStatsMenu();
   void goToFileBrowser(std::string path = {});
   void goToRecentBooks();
@@ -96,18 +95,9 @@ class ActivityManager {
   void goToSudoku();
   void goToGomoku();
   void goToMinesweeper();
-  void goToCellular();
   void goToStandby();
   void goToGame2048();
-#ifdef ENABLE_CHINESE_VERSION
-  void goToChineseChess();
-  void goToWeRead();
-  void goToWeReadShelf();
-  void goToWeReadSearch();
-  void goToWeReadRecommend();
-  void goToWeReadStats();
-  void goToWeReadBook(std::string bookId, std::string title);
-#endif
+  void goToDino();
   void goHome(HomeMenuItem initialMenuItem = HomeMenuItem::NONE);
 
   // This will move current activity to stack instead of deleting it

@@ -13,16 +13,11 @@
 #include "RecentBooksStore.h"
 #include "components/UITheme.h"
 #include "components/icons/apps.h"
-#include "components/icons/avatar.h"
 #include "components/icons/book.h"
 #include "components/icons/book24.h"
 #include "components/icons/bookmark.h"
-#include "components/icons/cellular.h"
-#ifdef ENABLE_CHINESE_VERSION
-#include "components/icons/chinese_chess.h"
-#include "components/icons/weread.h"
-#endif
 #include "components/icons/cover.h"
+#include "components/icons/dino.h"
 #include "components/icons/file24.h"
 #include "components/icons/folder.h"
 #include "components/icons/folder24.h"
@@ -94,22 +89,14 @@ const uint8_t* iconForName(UIIcon icon, int size) {
         return SudokuIcon;
       case UIIcon::Gomoku:
         return GomokuIcon;
-#ifdef ENABLE_CHINESE_VERSION
-      case UIIcon::ChineseChess:
-        return ChineseChessIcon;
-      case UIIcon::WeRead:
-        return WeReadIcon;
-#endif
       case UIIcon::Minesweeper:
         return MinesweeperIcon;
-      case UIIcon::Avatar:
-        return AvatarIcon;
-      case UIIcon::Cellular:
-        return CellularIcon;
       case UIIcon::Standby:
         return StandbyIcon;
       case UIIcon::Game2048:
         return Game2048Icon;
+      case UIIcon::Dino:
+        return DinoIcon;
       default:
         return nullptr;
     }

@@ -22,21 +22,15 @@ enum class WebServerActivityState {
 //   FileTransfer    Default. Opens NetworkModeSelectionActivity so the user
 //                   picks Join Network / Calibre / Create Hotspot, then a
 //                   general-purpose web server backs file management.
-//
-//   WeReadKeySetup  Single-purpose path for binding a WeRead API key via the
-//                   user's phone. Skips the mode chooser, only runs STA on a
-//                   saved network, and the device screen / QR point at the
-//                   /weread paste form instead of the file-transfer root.
 enum class WebServerEntryPurpose {
   FileTransfer,
-  WeReadKeySetup,
 };
 
 /**
  * CrossPointWebServerActivity owns the device-side flow for bringing up the
- * built-in web server. Two entry purposes share this activity (see
+ * built-in web server. Defaults to the file-transfer purpose (see
  * WebServerEntryPurpose) — the file-transfer path runs the full network mode
- * chooser, while the WeRead-key path skips straight to STA + the /weread page.
+ * chooser.
  *
  * Shared lifecycle:
  *  - Connect WiFi (STA or AP), with mDNS for crosspoint.local resolution.

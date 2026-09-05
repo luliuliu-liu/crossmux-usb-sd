@@ -564,6 +564,10 @@ STR_2048_HINT_RESTART: "Press New to start again"
 STR_2048_CONFIRM_NEW: "Start new game?"
 STR_2048_CONFIRM_BODY: "Current progress will be lost."
 
+STR_DINO_TITLE: "Dino Run"
+STR_DINO_SCORE: "Score"
+STR_DINO_GAME_OVER: "Game Over"
+
 STR_WEREAD_TITLE: "WeRead Copilot"
 STR_WEREAD_MENU_SHELF: "My Shelf"
 STR_WEREAD_MENU_SEARCH: "Search Books"

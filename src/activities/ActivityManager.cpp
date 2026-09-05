@@ -8,17 +8,7 @@
 #include "OpdsServerStore.h"
 #include "apps/2048/Game2048Activity.h"
 #include "apps/AppsMenuActivity.h"
-#include "apps/avatar/UglyAvatarActivity.h"
-#include "apps/cellular/CellularGameActivity.h"
-#ifdef ENABLE_CHINESE_VERSION
-#include "apps/chinese-chess/ChineseChessMenuActivity.h"
-#include "apps/weread/WeReadBookActivity.h"
-#include "apps/weread/WeReadMenuActivity.h"
-#include "apps/weread/WeReadRecommendActivity.h"
-#include "apps/weread/WeReadSearchActivity.h"
-#include "apps/weread/WeReadShelfActivity.h"
-#include "apps/weread/WeReadStatsActivity.h"
-#endif
+#include "apps/dino/DinoRunActivity.h"
 #include "apps/gomoku/GomokuMenuActivity.h"
 #include "apps/minesweeper/MinesweeperMenuActivity.h"
 #include "apps/reading-stats/ReadingStatsMenuActivity.h"
@@ -193,8 +183,6 @@ void ActivityManager::goToFileTransfer() {
 
 void ActivityManager::goToSettings() { replaceActivity(std::make_unique<SettingsActivity>(renderer, mappedInput)); }
 
-void ActivityManager::goToUglyAvatar() { replaceActivity(std::make_unique<UglyAvatarActivity>(renderer, mappedInput)); }
-
 void ActivityManager::goToFileBrowser(std::string path) {
   replaceActivity(std::make_unique<FileBrowserActivity>(renderer, mappedInput, std::move(path)));
 }
@@ -261,39 +249,11 @@ void ActivityManager::goToMinesweeper() {
   replaceActivity(std::make_unique<MinesweeperMenuActivity>(renderer, mappedInput));
 }
 
-void ActivityManager::goToCellular() { replaceActivity(std::make_unique<CellularGameActivity>(renderer, mappedInput)); }
+void ActivityManager::goToDino() { replaceActivity(std::make_unique<DinoRunActivity>(renderer, mappedInput)); }
 
 void ActivityManager::goToGame2048() { replaceActivity(std::make_unique<Game2048Activity>(renderer, mappedInput)); }
 
 void ActivityManager::goToStandby() { replaceActivity(std::make_unique<StandbyActivity>(renderer, mappedInput)); }
-
-#ifdef ENABLE_CHINESE_VERSION
-void ActivityManager::goToChineseChess() {
-  replaceActivity(std::make_unique<ChineseChessMenuActivity>(renderer, mappedInput));
-}
-
-void ActivityManager::goToWeRead() { replaceActivity(std::make_unique<WeReadMenuActivity>(renderer, mappedInput)); }
-
-void ActivityManager::goToWeReadShelf() {
-  replaceActivity(std::make_unique<WeReadShelfActivity>(renderer, mappedInput));
-}
-
-void ActivityManager::goToWeReadSearch() {
-  replaceActivity(std::make_unique<WeReadSearchActivity>(renderer, mappedInput));
-}
-
-void ActivityManager::goToWeReadRecommend() {
-  replaceActivity(std::make_unique<WeReadRecommendActivity>(renderer, mappedInput));
-}
-
-void ActivityManager::goToWeReadStats() {
-  replaceActivity(std::make_unique<WeReadStatsActivity>(renderer, mappedInput));
-}
-
-void ActivityManager::goToWeReadBook(std::string bookId, std::string title) {
-  replaceActivity(std::make_unique<WeReadBookActivity>(renderer, mappedInput, std::move(bookId), std::move(title)));
-}
-#endif
 
 void ActivityManager::pushActivity(std::unique_ptr<Activity>&& activity) {
   if (pendingActivity) {
