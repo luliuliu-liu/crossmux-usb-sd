@@ -111,7 +111,6 @@ list(FILTER CROSSPOINT_SRC EXCLUDE REGEX "src/network/")
 # actually fetch over the network, so AirPage and WeRead can hit the real internet.
 list(APPEND CROSSPOINT_SRC ${REPO_ROOT}/src/network/HttpDownloader.cpp)
 list(FILTER CROSSPOINT_SRC EXCLUDE REGEX "src/activities/network/")
-list(FILTER CROSSPOINT_SRC EXCLUDE REGEX "OpdsBookBrowserActivity")
 list(FILTER CROSSPOINT_SRC EXCLUDE REGEX "OtaUpdateActivity")
 list(FILTER CROSSPOINT_SRC EXCLUDE REGEX "SdFirmwareUpdateActivity")
 list(FILTER CROSSPOINT_SRC EXCLUDE REGEX "FontDownloadActivity")

@@ -17,6 +17,11 @@
 #include <Logging.h>
 #include <WiFi.h>
 
+#include <GfxRenderer.h>
+#include <I18n.h>
+#include "components/UITheme.h"
+#include "fontIds.h"
+
 #include <cstring>
 #include <memory>
 
@@ -175,13 +180,33 @@ void selfTest() {}
 STUB_ACTIVITY_BASE(WifiSelectionActivity)
 
 #include "activities/network/CrossPointWebServerActivity.h"
-STUB_ACTIVITY_BASE(CrossPointWebServerActivity)
+// The real file-transfer server depends on ESPmDNS/WebServer and is excluded
+// from the host build. Do not silently leave the user on a blank screen: the
+// simulator explicitly explains that this device-side server is unavailable.
+void CrossPointWebServerActivity::onEnter() {
+  Activity::onEnter();
+  requestUpdate();
+}
+void CrossPointWebServerActivity::onExit() { Activity::onExit(); }
+void CrossPointWebServerActivity::loop() {
+  if (mappedInput.wasReleased(MappedInputManager::Button::Back) ||
+      mappedInput.wasReleased(MappedInputManager::Button::Confirm)) {
+    onGoHome();
+  }
+}
+void CrossPointWebServerActivity::render(RenderLock&&) {
+  renderer.clearScreen();
+  const int w = renderer.getScreenWidth();
+  const int h = renderer.getScreenHeight();
+  renderer.drawCenteredText(UI_12_FONT_ID, h / 2 - 25, "File transfer is unavailable");
+  renderer.drawCenteredText(UI_10_FONT_ID, h / 2 + 5, "Use OPDS or copy files to simulator/sd_root");
+  const auto labels = mappedInput.mapLabels("Back", "OK", "", "");
+  GUI.drawButtonHints(renderer, labels.btn1, labels.btn2, labels.btn3, labels.btn4);
+  renderer.displayBuffer();
+}
 
 #include "activities/network/CalibreConnectActivity.h"
 STUB_ACTIVITY_BASE(CalibreConnectActivity)
-
-#include "activities/browser/OpdsBookBrowserActivity.h"
-STUB_ACTIVITY_BASE(OpdsBookBrowserActivity)
 
 #include "activities/settings/OtaUpdateActivity.h"
 STUB_ACTIVITY_BASE(OtaUpdateActivity)
