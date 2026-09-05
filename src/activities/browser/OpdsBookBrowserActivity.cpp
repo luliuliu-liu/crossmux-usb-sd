@@ -284,7 +284,10 @@ void OpdsBookBrowserActivity::downloadBook(const OpdsEntry& book) {
 
   if (result == HttpDownloader::OK) {
     clearBookCache(filename);
-    state = BrowserState::BROWSING;
+    // Close the download loop and hand control straight to the EPUB reader.
+    LOG_DBG("OPDS", "Download complete: %s — opening reader", filename.c_str());
+    activityManager.goToReader(filename);
+    return;
   } else {
     state = BrowserState::ERROR;
     errorMessage = tr(STR_DOWNLOAD_FAILED);
