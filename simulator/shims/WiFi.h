@@ -8,13 +8,28 @@
 #include <WString.h>
 
 #include <cstdint>
+#include <string>
 
 class IPAddress {
  public:
   IPAddress() = default;
-  IPAddress(uint8_t, uint8_t, uint8_t, uint8_t) {}
-  operator uint32_t() const { return 0; }
-  String toString() const { return String("127.0.0.1"); }
+  IPAddress(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
+      : value_(static_cast<uint32_t>(a) << 24 | static_cast<uint32_t>(b) << 16 |
+               static_cast<uint32_t>(c) << 8 | static_cast<uint32_t>(d)) {}
+  operator uint32_t() const { return value_; }
+  uint8_t operator[](int index) const {
+    if (index < 0 || index > 3) return 0;
+    return static_cast<uint8_t>((value_ >> (24 - index * 8)) & 0xff);
+  }
+  String toString() const {
+    return String(std::to_string((value_ >> 24) & 0xff) + "." +
+                  std::to_string((value_ >> 16) & 0xff) + "." +
+                  std::to_string((value_ >> 8) & 0xff) + "." +
+                  std::to_string(value_ & 0xff));
+  }
+
+ private:
+  uint32_t value_ = 0;
 };
 
 enum WiFiMode { WIFI_OFF = 0, WIFI_STA, WIFI_AP, WIFI_AP_STA };
